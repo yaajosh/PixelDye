@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const colorPalette = document.getElementById('colorPalette');
     const addToPaletteBtn = document.getElementById('addToPaletteBtn');
     const antiAliasCheckbox = document.getElementById('antiAliasCheckbox');
+    const themeToggle = document.getElementById('checkbox');
 
     // Variablen
     let originalImage = null;
@@ -23,6 +24,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Farbpalette aus localStorage laden oder leeres Array erstellen
     let colorPaletteItems = JSON.parse(localStorage.getItem('colorPalette')) || [];
+    
+    // Theme aus localStorage laden
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    themeToggle.checked = currentTheme === 'dark';
+    
+    // Theme toggle event
+    themeToggle.addEventListener('change', function() {
+        if(this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    });
     
     // Palette beim Laden der Seite aktualisieren
     updateColorPalette();

@@ -1,63 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Color Replacement Tool</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container fade-in">
+        <div class="theme-switch-wrapper">
+            <span class="theme-label">Theme</span>
+            <label class="theme-switch" for="checkbox" data-tooltip="Toggle dark mode">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider">
+                    <div class="slider-icons">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </div>
+            </label>
+        </div>
+        
         <h1>Color Replacement Tool</h1>
         
-        <div class="explanation">
+        <div class="explanation card">
             <p>This tool allows you to replace specific colors in PNG images with new colors. It uses advanced color matching algorithms to ensure smooth transitions and edge handling.</p>
             <p><strong>How to use:</strong> Upload a PNG image, click on a color you want to replace, select a new color, and click "Replace Color". You can save your favorite colors in the palette for quick access.</p>
         </div>
         
-        <div class="upload-section">
-            <h2>1. Upload Image</h2>
-            <input type="file" id="imageUpload" accept="image/png">
+        <div class="upload-section card">
+            <h2><i class="fas fa-upload" style="margin-right: 10px;"></i>Upload Image</h2>
+            <div class="file-upload-container">
+                <i class="fas fa-file-image"></i>
+                <p>Drag & drop a PNG image or click to browse</p>
+                <input type="file" id="imageUpload" accept="image/png">
+            </div>
         </div>
 
-        <div class="color-section" id="colorSection">
-            <h2>2. Select and Replace Colors</h2>
+        <div class="color-section card" id="colorSection">
+            <h2><i class="fas fa-palette" style="margin-right: 10px;"></i>Select and Replace Colors</h2>
             <div class="canvas-container">
                 <canvas id="imageCanvas"></canvas>
                 <div id="colorInfo" class="color-info">
                     <div>
                         <span>Selected Color:</span> 
-                        <div id="selectedColorDisplay" class="color-display"></div>
+                        <div id="selectedColorDisplay" class="color-display" data-tooltip="Color picked from image"></div>
                         <span id="selectedColorHex">-</span>
                     </div>
                     <div>
                         <span>New Color:</span>
-                        <input type="color" id="replacementColor" value="#ff0000">
-                        <span id="replacementColorHex" class="editable-hex">#ff0000</span>
-                        <button id="addToPaletteBtn">Add to Palette</button>
+                        <input type="color" id="replacementColor" value="#ff0000" data-tooltip="Click to choose a color">
+                        <span id="replacementColorHex" class="editable-hex" data-tooltip="Click to edit hex value">#ff0000</span>
+                        <button id="addToPaletteBtn" data-tooltip="Save this color to palette">
+                            <i class="fas fa-plus" style="margin-right: 5px;"></i>Add to Palette
+                        </button>
                     </div>
                 </div>
             </div>
             
             <div class="palette-container">
-                <h3>Color Palette</h3>
+                <h3><i class="fas fa-swatchbook" style="margin-right: 8px;"></i>Color Palette</h3>
                 <div id="colorPalette" class="color-palette"></div>
-                <p class="palette-hint">Right-click to remove, click to select</p>
+                <p class="palette-hint"><i class="fas fa-info-circle" style="margin-right: 5px;"></i>Click to select a color, right-click to remove</p>
             </div>
             
             <div class="options">
-                <label>
+                <label data-tooltip="Smooths color transitions at edges">
                     <input type="checkbox" id="antiAliasCheckbox" checked>
                     Edge Smoothing (Anti-Aliasing)
                 </label>
             </div>
             
             <div class="controls">
-                <button id="replaceColorBtn" disabled>Replace Color</button>
-                <button id="downloadBtn" disabled>Download Image</button>
-                <button id="resetBtn" disabled>Reset</button>
+                <button id="replaceColorBtn" disabled>
+                    <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>Replace Color
+                </button>
+                <button id="downloadBtn" disabled>
+                    <i class="fas fa-download" style="margin-right: 8px;"></i>Download Image
+                </button>
+                <button id="resetBtn" disabled>
+                    <i class="fas fa-undo" style="margin-right: 8px;"></i>Reset
+                </button>
             </div>
-            <p class="instructions">Click on the image to select a color.</p>
+            <p class="instructions"><i class="fas fa-mouse-pointer" style="margin-right: 5px;"></i>Click on the image to select a color.</p>
         </div>
     </div>
     <script src="script.js"></script>
