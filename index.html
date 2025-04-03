@@ -3,93 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Replacement Tool</title>
+    <title>PixelDye - Color Replacement Tool</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container fade-in">
-        <div class="theme-switch-wrapper">
-            <span class="theme-label">Theme</span>
-            <label class="theme-switch" for="checkbox" data-tooltip="Toggle dark mode">
-                <input type="checkbox" id="checkbox" />
-                <div class="slider">
-                    <div class="slider-icons">
-                        <i class="fas fa-sun"></i>
-                        <i class="fas fa-moon"></i>
+    <div class="app-container">
+        <!-- Header with app name and theme toggle -->
+        <header class="app-header">
+            <div class="app-title">
+                <i class="fas fa-paint-brush"></i>
+                <h1>PixelDye</h1>
+            </div>
+            <div class="app-controls">
+                <label class="theme-switch" for="checkbox" data-tooltip="Toggle dark mode">
+                    <input type="checkbox" id="checkbox" />
+                    <div class="slider">
+                        <div class="slider-icons">
+                            <i class="fas fa-sun"></i>
+                            <i class="fas fa-moon"></i>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <!-- Left sidebar (Photoshop style) -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Colors</h3>
+                    <div class="color-picker-section">
+                        <div class="color-item">
+                            <span class="color-label">Selected</span>
+                            <div id="selectedColorDisplay" class="color-swatch"></div>
+                            <span id="selectedColorHex" class="color-hex">-</span>
+                        </div>
+                        <div class="color-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="color-item">
+                            <span class="color-label">New</span>
+                            <div id="replacementColorDisplay" class="color-swatch" tabindex="0" aria-label="Open color picker"></div>
+                            <span id="replacementColorHex" class="color-hex" tabindex="0" role="button" aria-label="Edit hex color value">#ff0000</span>
+                        </div>
+                    </div>
+                    <div class="sidebar-actions">
+                        <button id="replaceColorBtn" class="action-button primary" disabled aria-label="Replace selected color with new color">
+                            <i class="fas fa-paint-brush"></i>
+                            <span>Replace</span>
+                        </button>
+                        <button id="addToPaletteBtn" class="action-button accent" disabled>
+                            <i class="fas fa-plus"></i>
+                            <span>Save Color</span>
+                        </button>
                     </div>
                 </div>
-            </label>
-        </div>
-        
-        <h1>Color Replacement Tool</h1>
-        
-        <div class="explanation card">
-            <p>This tool allows you to replace specific colors in PNG images with new colors. It uses advanced color matching algorithms to ensure smooth transitions and edge handling.</p>
-            <p><strong>How to use:</strong> Upload a PNG image, click on a color you want to replace, select a new color, and click "Replace Color". You can save your favorite colors in the palette for quick access.</p>
-        </div>
-        
-        <div class="upload-section card">
-            <h2><i class="fas fa-upload" style="margin-right: 10px;"></i>Upload Image</h2>
-            <div class="file-upload-container">
-                <i class="fas fa-file-image"></i>
-                <p>Drag & drop a PNG image or click to browse</p>
-                <input type="file" id="imageUpload" accept="image/png">
-            </div>
-        </div>
-
-        <div class="color-section card" id="colorSection">
-            <h2><i class="fas fa-palette" style="margin-right: 10px;"></i>Select and Replace Colors</h2>
-            <div class="canvas-container">
-                <canvas id="imageCanvas"></canvas>
-                <div id="colorInfo" class="color-info">
-                    <div>
-                        <span>Selected Color:</span> 
-                        <div id="selectedColorDisplay" class="color-display" data-tooltip="Color picked from image"></div>
-                        <span id="selectedColorHex">-</span>
-                    </div>
-                    <div>
-                        <span>New Color:</span>
-                        <input type="color" id="replacementColor" value="#ff0000" data-tooltip="Click to choose a color">
-                        <span id="replacementColorHex" class="editable-hex" data-tooltip="Click to edit hex value">#ff0000</span>
-                        <button id="addToPaletteBtn" data-tooltip="Save this color to palette">
-                            <i class="fas fa-plus" style="margin-right: 5px;"></i>Add to Palette
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Saved Colors</h3>
+                    <div class="saved-colors-panel" id="savedColorsPanel"></div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title">Actions</h3>
+                    <div class="sidebar-actions">
+                        <button id="resetBtn" class="action-button secondary" disabled>
+                            <i class="fas fa-undo"></i>
+                            <span>Reset</span>
+                        </button>
+                        <button id="downloadBtn" class="action-button success" disabled>
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
                         </button>
                     </div>
                 </div>
             </div>
-            
-            <div class="palette-container">
-                <h3><i class="fas fa-swatchbook" style="margin-right: 8px;"></i>Color Palette</h3>
-                <div id="colorPalette" class="color-palette"></div>
-                <p class="palette-hint"><i class="fas fa-info-circle" style="margin-right: 5px;"></i>Click to select a color, right-click to remove</p>
-            </div>
-            
-            <div class="options">
-                <label data-tooltip="Smooths color transitions at edges">
-                    <input type="checkbox" id="antiAliasCheckbox" checked>
-                    Edge Smoothing (Anti-Aliasing)
-                </label>
-            </div>
-            
-            <div class="controls">
-                <button id="replaceColorBtn" disabled>
-                    <i class="fas fa-paint-brush" style="margin-right: 8px;"></i>Replace Color
-                </button>
-                <button id="downloadBtn" disabled>
-                    <i class="fas fa-download" style="margin-right: 8px;"></i>Download Image
-                </button>
-                <button id="resetBtn" disabled>
-                    <i class="fas fa-undo" style="margin-right: 8px;"></i>Reset
-                </button>
-            </div>
-            <p class="instructions"><i class="fas fa-mouse-pointer" style="margin-right: 5px;"></i>Click on the image to select a color.</p>
+
+            <!-- Main workspace -->
+            <main class="workspace">
+                <!-- Upload area (visible before image upload) -->
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h2>Upload an Image</h2>
+                        <p>Drag & drop a PNG image here or click to browse</p>
+                        <label for="imageUpload" class="upload-button">
+                            <i class="fas fa-file-image"></i>
+                            Select Image
+                        </label>
+                        <input type="file" id="imageUpload" accept="image/png" hidden>
+                    </div>
+                </div>
+
+                <!-- Editor area (visible after image upload) -->
+                <div class="editor-area" id="editorArea">
+                    <div class="canvas-container" id="canvasContainer">
+                        <canvas id="imageCanvas" aria-label="Image editor canvas. Click on the image to select a color."></canvas>
+                    </div>
+                </div>
+            </main>
         </div>
-        
-        <footer class="legal-footer">
-            <div class="privacy-info">
+
+        <!-- Color Picker Modal -->
+        <div class="color-picker-modal" id="colorPickerModal">
+            <div class="color-picker-header">
+                <h3>Select Color</h3>
+                <button class="close-btn" id="closeColorPicker" aria-label="Close color picker">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="color-picker-content">
+                <div class="color-preview-large" id="colorPreviewLarge"></div>
+                
+                <div class="color-spectrum-container">
+                    <div class="color-spectrum" id="colorSpectrum">
+                        <div class="color-spectrum-selector" id="colorSpectrumSelector"></div>
+                    </div>
+                </div>
+                
+                <div class="color-inputs">
+                    <div class="color-input-group">
+                        <label for="redInput">R</label>
+                        <input type="number" id="redInput" min="0" max="255" value="255">
+                    </div>
+                    <div class="color-input-group">
+                        <label for="greenInput">G</label>
+                        <input type="number" id="greenInput" min="0" max="255" value="0">
+                    </div>
+                    <div class="color-input-group">
+                        <label for="blueInput">B</label>
+                        <input type="number" id="blueInput" min="0" max="255" value="0">
+                    </div>
+                    <div class="color-input-group">
+                        <label for="hexInput">#</label>
+                        <input type="text" id="hexInput" value="ff0000" maxlength="6">
+                    </div>
+                </div>
+                
+                <div class="color-picker-actions">
+                    <button id="saveColorBtn" class="action-button accent">
+                        <i class="fas fa-plus"></i>
+                        <span>Save Color</span>
+                    </button>
+                    <button id="applyColorBtn" class="action-button primary">
+                        <i class="fas fa-check"></i>
+                        <span>Apply</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer with privacy info -->
+        <footer class="app-footer">
+            <div class="privacy-notice">
                 <i class="fas fa-shield-alt"></i>
-                <p><strong>Privacy Notice:</strong> This tool processes all images locally in your browser. No data is sent to any server. Your color palette is saved in your browser's local storage only.</p>
+                <p><strong>Privacy Notice:</strong> This tool processes all images locally in your browser. No data is sent to any server.</p>
             </div>
             <div class="copyright">
                 <p>By <a href="https://www.linkedin.com/in/joschuaziethenyaa/">Josh</a></p>
