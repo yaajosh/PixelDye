@@ -762,4 +762,51 @@ input:checked + .slider:before {
 [data-tooltip]:hover::after {
     opacity: 1;
     visibility: visible;
+}
+
+/* Legal footer styling */
+.legal-footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.privacy-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--bg-section);
+    border-radius: var(--border-radius);
+    margin-bottom: 15px;
+}
+
+.privacy-info i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-top: 3px;
+}
+
+.privacy-info p {
+    line-height: 1.5;
+}
+
+.privacy-info strong {
+    color: var(--primary);
+}
+
+.copyright {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .privacy-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
 } 
