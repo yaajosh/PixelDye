@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Replacement Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Color Replacement Tool</h1>
+        
+        <div class="explanation">
+            <p>This tool allows you to replace specific colors in PNG images with new colors. It uses advanced color matching algorithms to ensure smooth transitions and edge handling.</p>
+            <p><strong>How to use:</strong> Upload a PNG image, click on a color you want to replace, select a new color, and click "Replace Color". You can save your favorite colors in the palette for quick access.</p>
+        </div>
+        
+        <div class="upload-section">
+            <h2>1. Upload Image</h2>
+            <input type="file" id="imageUpload" accept="image/png">
+        </div>
+
+        <div class="color-section" id="colorSection">
+            <h2>2. Select and Replace Colors</h2>
+            <div class="canvas-container">
+                <canvas id="imageCanvas"></canvas>
+                <div id="colorInfo" class="color-info">
+                    <div>
+                        <span>Selected Color:</span> 
+                        <div id="selectedColorDisplay" class="color-display"></div>
+                        <span id="selectedColorHex">-</span>
+                    </div>
+                    <div>
+                        <span>New Color:</span>
+                        <input type="color" id="replacementColor" value="#ff0000">
+                        <span id="replacementColorHex" class="editable-hex">#ff0000</span>
+                        <button id="addToPaletteBtn">Add to Palette</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="palette-container">
+                <h3>Color Palette</h3>
+                <div id="colorPalette" class="color-palette"></div>
+                <p class="palette-hint">Right-click to remove, click to select</p>
+            </div>
+            
+            <div class="options">
+                <label>
+                    <input type="checkbox" id="antiAliasCheckbox" checked>
+                    Edge Smoothing (Anti-Aliasing)
+                </label>
+            </div>
+            
+            <div class="controls">
+                <button id="replaceColorBtn" disabled>Replace Color</button>
+                <button id="downloadBtn" disabled>Download Image</button>
+                <button id="resetBtn" disabled>Reset</button>
+            </div>
+            <p class="instructions">Click on the image to select a color.</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
