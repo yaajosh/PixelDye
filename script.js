@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const workspace = document.querySelector('.workspace');
     const toleranceSlider = document.getElementById('toleranceSlider');
     const toleranceValue = document.getElementById('toleranceValue');
+    const undoBtn = document.getElementById('undoBtn');
 
     // Variables
     let originalImage = null;
@@ -40,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
     let viewPosition = { x: 0, y: 0 };
+    let historyStack = []; // History stack for undo
+    const maxHistorySize = 10; // Limit history size
     
     // Initialize UI state
     editorArea.style.display = 'none';
@@ -112,6 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = (event) => {
             const img = new Image();
             img.onload = () => {
+                // Clear history when a new image is loaded
+                clearHistory(); 
+
                 // Adjust canvas size
                 imageCanvas.width = img.width;
                 imageCanvas.height = img.height;
@@ -150,6 +156,27 @@ document.addEventListener('DOMContentLoaded', () => {
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
+    }
+
+    // Center the image in the container initially
+    function centerImage() {
+        if (!imageCanvas || !canvasContainer) return;
+
+        const containerWidth = canvasContainer.clientWidth;
+        const containerHeight = canvasContainer.clientHeight;
+        const imageWidth = imageCanvas.width;
+        const imageHeight = imageCanvas.height;
+
+        // Calculate initial scale to fit the image within the container
+        const scaleX = containerWidth / imageWidth;
+        const scaleY = containerHeight / imageHeight;
+        scale = Math.min(scaleX, scaleY, 1); // Use the smaller scale, max 1 (100%)
+
+        // Calculate initial position to center the scaled image
+        viewPosition.x = (containerWidth - imageWidth * scale) / 2;
+        viewPosition.y = (containerHeight - imageHeight * scale) / 2;
+
+        applyTransform();
     }
 
     // Add zoom controls
@@ -270,13 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
     imageCanvas.addEventListener('click', (e) => {
         if (!originalImage || isDragging) return;
         
-        // Get position in canvas
+        // Get position relative to the viewport
         const rect = imageCanvas.getBoundingClientRect();
-        const scaleX = imageCanvas.width / (rect.width * scale);
-        const scaleY = imageCanvas.height / (rect.height * scale);
         
-        const x = Math.floor(((e.clientX - rect.left) / scale) * scaleX);
-        const y = Math.floor(((e.clientY - rect.top) / scale) * scaleY);
+        // Calculate the click position relative to the canvas element's top-left corner,
+        // then adjust for the current scale to get coordinates on the original image.
+        const x = Math.floor((e.clientX - rect.left) / scale);
+        const y = Math.floor((e.clientY - rect.top) / scale);
         
         // Ensure coordinates are within bounds
         if (x < 0 || x >= imageCanvas.width || y < 0 || y >= imageCanvas.height) {
@@ -314,6 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get replacement color
         const newColor = hexToRgb(replacementColorHex.textContent);
         
+        // Save current state to history before getting image data for modification
+        saveHistory();
+
         // Get image data
         const imageData = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
         const data = imageData.data;
@@ -351,6 +381,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Enable download button
         downloadBtn.disabled = false;
+        // Enable Undo button as a change was made
+        undoBtn.disabled = historyStack.length === 0;
         
         // Announce when color is replaced
         announceToScreenReader('Color replaced successfully');
@@ -378,6 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             replaceColorBtn.disabled = true;
             addToPaletteBtn.disabled = true;
             
+            // Clear history and disable Undo button on reset
+            clearHistory();
+
             // Announce reset
             announceToScreenReader('Image has been reset');
         }
@@ -396,20 +431,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add to saved colors
     addToPaletteBtn.addEventListener('click', () => {
-        if (!selectedColor) return;
+        // Button should be enabled only when a color is selected, 
+        // but we save the *replacement* color.
+        const hexColor = replacementColorHex.textContent;
+
+        // Check if the replacement color is a valid hex code
+        if (!/^#[0-9A-Fa-f]{6}$/.test(hexColor)) {
+            announceToScreenReader('Invalid replacement color format.');
+            return;
+        }
         
-        const hexColor = rgbaToHex(selectedColor.r, selectedColor.g, selectedColor.b);
-        
-        // Check if color already exists
+        // Check if color already exists in the palette
         if (!savedColorItems.includes(hexColor)) {
             savedColorItems.push(hexColor);
-            updateSavedColors();
+            updateSavedColors(); // Update the sidebar display
+            // Also update the grid in the modal if it's open
+            if (colorPickerModal.style.display === 'block') {
+                updateSavedColorsGrid(); 
+            }
             
             // Save to localStorage
             localStorage.setItem('savedColors', JSON.stringify(savedColorItems));
             
             // Announce color saved
-            announceToScreenReader(`Color ${hexColor} saved to palette`);
+            announceToScreenReader(`Replacement color ${hexColor} saved to palette`);
+        } else {
+            announceToScreenReader(`Color ${hexColor} is already in the palette`);
         }
     });
 
@@ -848,4 +895,57 @@ document.addEventListener('DOMContentLoaded', () => {
         tolerance = parseInt(e.target.value);
         toleranceValue.textContent = tolerance;
     });
+
+    // --- History Management ---
+
+    function saveHistory() {
+        // Save current canvas state
+        const currentState = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+        historyStack.push(currentState);
+
+        // Limit history size
+        if (historyStack.length > maxHistorySize) {
+            historyStack.shift(); // Remove the oldest entry
+        }
+        // Keep undo button enabled as we just added history
+        undoBtn.disabled = false;
+    }
+
+    function undoLastChange() {
+        if (historyStack.length > 0) {
+            const previousState = historyStack.pop();
+            ctx.putImageData(previousState, 0, 0);
+            
+            // Disable undo if history is now empty
+            undoBtn.disabled = historyStack.length === 0;
+            
+            // Re-enable download button as the undone state is valid
+            downloadBtn.disabled = false; 
+            
+            announceToScreenReader('Last change undone');
+        } else {
+            announceToScreenReader('Nothing to undo');
+        }
+    }
+
+    function clearHistory() {
+        historyStack = [];
+        undoBtn.disabled = true;
+    }
+
+    // Event listener for Undo button
+    undoBtn.addEventListener('click', undoLastChange);
+
+    // Event listener for keyboard shortcuts (Cmd+Z / Ctrl+Z)
+    window.addEventListener('keydown', (e) => {
+        // Check if the editor area is visible
+        if (editorArea.style.display !== 'none') {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+                e.preventDefault(); // Prevent browser default undo
+                undoLastChange();
+            }
+        }
+    });
+
+    // --- End History Management ---
 }); 

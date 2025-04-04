@@ -954,16 +954,31 @@ button:focus, input:focus, .color-hex:focus {
     padding: 10px;
 }
 
-/* Tolerance section styles */
+/* Styling for subsections within a sidebar section */
+.sidebar-subsection {
+    margin-top: 15px; /* Add some space above subsections */
+    padding-top: 10px; /* Add padding for visual separation */
+    border-top: 1px solid var(--border-color); /* Separator line */
+}
+
+/* Tolerance section adjustments */
 .tolerance-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 5px;
+    display: flex;         /* Use flexbox */
+    align-items: center;   /* Vertically align items */
+    gap: 8px;            /* Adjust gap */
+    flex-wrap: nowrap;     /* Prevent wrapping */
+    width: 100%;         /* Ensure it takes full width */
+}
+
+.sub-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex-shrink: 0; /* Prevent label from shrinking */
 }
 
 .tolerance-slider {
-    flex-grow: 1;
+    flex-grow: 1; /* Allow slider to take up remaining space */
+    min-width: 50px; /* Prevent slider from becoming too small */
     cursor: pointer;
     height: 8px;
     background-color: var(--bg-input);
@@ -1008,6 +1023,7 @@ button:focus, input:focus, .color-hex:focus {
     color: var(--text-primary);
     min-width: 25px; /* Ensure space for 3 digits */
     text-align: right;
+    flex-shrink: 0; /* Prevent value display from shrinking */
 }
 
 /* Responsive adjustments */
@@ -1046,4 +1062,23 @@ button:focus, input:focus, .color-hex:focus {
         margin-left: 0;
         margin-top: 250px;
     }
+}
+
+/* Style the primary action buttons (Replace, Save) */
+.primary-actions {
+    margin-top: 15px; /* Add space below color picker */
+    /* Optional: Keep side-by-side if space allows */
+    /* display: flex; */
+    /* flex-direction: row; */
+}
+
+/* Style the secondary action buttons (Undo, Reset, Download) */
+.secondary-actions {
+    /* Already has sidebar-subsection style (margin, padding, border) */
+    /* Optional: Different styling if needed */
+}
+
+.sidebar-actions .action-button {
+    width: 100%;
+    justify-content: center;
 } 

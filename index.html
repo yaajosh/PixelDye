@@ -32,7 +32,7 @@
             <!-- Left sidebar (Photoshop style) -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-section">
-                    <h3 class="sidebar-title">Colors</h3>
+                    <h3 class="sidebar-title">Controls</h3>
                     <div class="color-picker-section">
                         <div class="color-item">
                             <span class="color-label">Selected</span>
@@ -48,7 +48,8 @@
                             <span id="replacementColorHex" class="color-hex" tabindex="0" role="button" aria-label="Edit hex color value">#ff0000</span>
                         </div>
                     </div>
-                    <div class="sidebar-actions">
+                    <!-- Main action buttons directly below color pickers -->
+                    <div class="sidebar-actions primary-actions">
                         <button id="replaceColorBtn" class="action-button primary" disabled aria-label="Replace selected color with new color">
                             <i class="fas fa-paint-brush"></i>
                             <span>Replace</span>
@@ -58,26 +59,25 @@
                             <span>Save Color</span>
                         </button>
                     </div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Tolerance</h3>
-                    <div class="tolerance-section">
+                     <!-- Saved Colors moved inside Controls section -->
+                     <div class="saved-colors-container sidebar-subsection">
+                        <h4 class="sub-label">Saved Colors:</h4> <!-- Use sub-label style for consistency -->
+                        <div class="saved-colors-panel" id="savedColorsPanel"></div>
+                    </div>
+                    <!-- Tolerance below main actions -->
+                    <div class="tolerance-section sidebar-subsection">
+                        <label for="toleranceSlider" class="sub-label">Tolerance:</label>
                         <input type="range" id="toleranceSlider" min="0" max="100" value="15" class="tolerance-slider" aria-label="Adjust color matching tolerance">
                         <span id="toleranceValue" class="tolerance-value">15</span>
                     </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Saved Colors</h3>
-                    <div class="saved-colors-panel" id="savedColorsPanel"></div>
-                </div>
-                
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">Actions</h3>
-                    <div class="sidebar-actions">
-                        <button id="resetBtn" class="action-button secondary" disabled>
+                    <!-- Secondary actions at the bottom -->
+                    <div class="sidebar-actions secondary-actions sidebar-subsection">
+                        <button id="undoBtn" class="action-button secondary" disabled>
                             <i class="fas fa-undo"></i>
+                            <span>Undo</span>
+                        </button>
+                        <button id="resetBtn" class="action-button secondary" disabled>
+                            <i class="fas fa-redo"></i>
                             <span>Reset</span>
                         </button>
                         <button id="downloadBtn" class="action-button success" disabled>
@@ -85,7 +85,8 @@
                             <span>Download</span>
                         </button>
                     </div>
-                </div>
+                   
+                </div> <!-- This div closes the single "Controls" section -->
             </div>
 
             <!-- Main workspace -->
