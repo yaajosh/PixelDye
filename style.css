@@ -954,7 +954,61 @@ button:focus, input:focus, .color-hex:focus {
     padding: 10px;
 }
 
+/* Tolerance section styles */
+.tolerance-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
 
+.tolerance-slider {
+    flex-grow: 1;
+    cursor: pointer;
+    height: 8px;
+    background-color: var(--bg-input);
+    border-radius: 4px;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+.tolerance-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tolerance-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.tolerance-slider:hover::-webkit-slider-thumb {
+    background-color: var(--primary-dark);
+}
+
+.tolerance-slider:hover::-moz-range-thumb {
+    background-color: var(--primary-dark);
+}
+
+.tolerance-value {
+    font-size: 0.9rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    min-width: 25px; /* Ensure space for 3 digits */
+    text-align: right;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {

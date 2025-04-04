@@ -29,12 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const applyColorBtn = document.getElementById('applyColorBtn');
     const sidebar = document.getElementById('sidebar');
     const workspace = document.querySelector('.workspace');
+    const toleranceSlider = document.getElementById('toleranceSlider');
+    const toleranceValue = document.getElementById('toleranceValue');
 
     // Variables
     let originalImage = null;
     let selectedColor = null;
-    let tolerance = 15; // Color similarity tolerance
-    let antiAlias = true; // Anti-aliasing always enabled
+    let tolerance = 15; // Color similarity tolerance (default value)
     let scale = 1; // Current zoom level
     let isDragging = false;
     let dragStart = { x: 0, y: 0 };
@@ -333,13 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Replace if within tolerance
             if (colorDiff <= tolerance) {
-                // Calculate alpha factor for anti-aliasing
-                let alphaFactor = 1;
-                
-                if (antiAlias && colorDiff > tolerance / 2) {
-                    // Smooth transition at edges
-                    alphaFactor = 1 - ((colorDiff - tolerance / 2) / (tolerance / 2));
-                }
+                // Calculate alpha factor for smooth anti-aliasing
+                // Alpha is 1 (full replacement) if colorDiff is 0
+                // Alpha approaches 0 (no replacement) as colorDiff approaches tolerance
+                const alphaFactor = Math.max(0, 1 - (colorDiff / tolerance));
                 
                 // Apply new color with anti-aliasing
                 data[i] = Math.round(data[i] * (1 - alphaFactor) + newColor.r * alphaFactor);
@@ -844,4 +842,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Call this function after DOM content is loaded
     addBackButton();
+
+    // Add event listener for tolerance slider
+    toleranceSlider.addEventListener('input', (e) => {
+        tolerance = parseInt(e.target.value);
+        toleranceValue.textContent = tolerance;
+    });
 }); 

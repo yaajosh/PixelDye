@@ -32,8 +32,8 @@ This tool allows you to replace specific colors in PNG images with other colors.
 
 - The tool only works with PNG images
 - Processing very large images may take a few seconds
-- Color detection includes a tolerance of 15 to recognize similar color tones
-- Edge smoothing can be turned on/off with the checkbox
+- Color detection uses a tolerance setting (adjustable via a slider) to recognize similar color tones. Higher values select a wider range of colors.
+- Edge smoothing is automatically applied for cleaner transitions.
 
 ## Installation
 
