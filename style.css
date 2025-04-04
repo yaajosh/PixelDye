@@ -197,6 +197,7 @@ body {
     position: relative;
     background-color: var(--bg-workspace);
     transition: margin-left 0.3s ease;
+    margin: 0;
 }
 
 /* Upload area */
@@ -267,6 +268,7 @@ body {
     height: 100%;
     display: none;
     overflow: hidden;
+    padding: 0;
 }
 
 .canvas-container {
@@ -825,6 +827,7 @@ button:focus, input:focus, .color-hex:focus {
     display: flex;
     flex: 1;
     overflow: hidden;
+    padding: 0;
 }
 
 /* Sidebar styles */
@@ -951,10 +954,7 @@ button:focus, input:focus, .color-hex:focus {
     padding: 10px;
 }
 
-/* Add this class when the sidebar is shown */
-.workspace-with-sidebar {
-    margin-left: 250px;
-}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
