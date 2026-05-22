@@ -1,46 +1,44 @@
-# Color Replacement Tool
+# PixelDye — Color Replacement Tool
 
-This tool allows you to replace specific colors in PNG images with other colors.
+Browser-based tool to swap specific colors in an image. Runs entirely client-side — no uploads, no servers.
 
 ## Features
 
-- Upload PNG images
-- Select colors in the image by clicking
-- Replace selected colors with a new color code
-- Download edited images
-- Supports transparency (alpha channel)
-- Advanced edge smoothing with anti-aliasing
-- Color palette for quick access to frequently used colors
+- **Pick a color by clicking** on the image (3×3 area sampling, robust against anti-aliased edges)
+- **Full color picker**: SV (saturation/brightness) square + hue slider + RGB/HEX inputs + quick presets (white, black, grays, primary hues)
+- **Live selection preview**: before you hit Replace, matching pixels are highlighted in cyan on a pulsing overlay so you can see exactly what will change
+- **Connected-region mode** (optional): only replace pixels that touch the click point (flood fill)
+- **Perceptual color matching** using CIE Lab + ΔE2000, with smoothstep falloff for cleaner edges than linear blending
+- **Tolerance slider** to widen/narrow the match
+- **PNG, JPG, WebP** support for upload and download (JPG auto-composites onto white since it has no alpha)
+- **Saved palette** with localStorage persistence, hover-X to delete
+- **Before/after comparison**: hold <kbd>Space</kbd> to flash the original
+- **Undo** (Cmd/Ctrl+Z) up to 10 steps
+- **Zoom / pan**: scroll to zoom, drag to pan, double-click or Fit button to refit
+- **Light / dark theme** toggle, persisted
 
-## Instructions
+## Usage
 
-1. Upload a PNG image
-2. Click on a color in the image that you want to replace
-3. Select the new color from the color picker
-4. Click "Replace Color"
-5. Download the edited image with "Download Image"
-6. Use "Reset" to restore the original
+1. Open `index.html` in a browser (or just drop the folder on a static host like GitHub Pages)
+2. Drop or select an image (PNG / JPG / WebP)
+3. Click on a color in the image
+4. The matching region appears highlighted in cyan — adjust **Tolerance** until the highlight covers what you want
+5. Click the **New** swatch to pick a replacement color, then **Replace**
+6. Pick **Format** (Match source / PNG / JPG / WebP) and **Download**
 
-## Technical Details
+### Tips
 
-- The tool runs entirely in the browser and doesn't send data to external servers
-- It uses the Canvas API to perform image editing
-- Color replacement uses advanced Lab color space algorithms for better edge detection
-- The color palette is saved in your browser's local storage
+- Holding <kbd>Space</kbd> swaps to the original temporarily — great for checking your work
+- Toggle **Only connected region** to restrict replacement to one shape (useful when many things in the image share the same color)
+- Right-click a saved palette swatch (or hover and click its X) to remove it
+- <kbd>Cmd/Ctrl+Z</kbd> undoes the last replace
 
-## Notes
+## Tech
 
-- The tool only works with PNG images
-- Processing very large images may take a few seconds
-- Color detection uses a tolerance setting (adjustable via a slider) to recognize similar color tones. Higher values select a wider range of colors.
-- Edge smoothing is automatically applied for cleaner transitions.
-
-## Installation
-
-1. Download all files
-2. Open `index.html` in your browser
-
-Or open `index.html` directly from the directory.
+- Pure HTML / CSS / vanilla JS, no build step
+- Canvas API for pixel-level editing
+- CIEDE2000 implementation for perceptually-uniform color difference
+- localStorage for theme + palette
 
 ## License
 

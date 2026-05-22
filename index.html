@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header with app name and theme toggle -->
         <header class="app-header">
             <div class="app-title">
                 <i class="fas fa-paint-brush"></i>
@@ -29,15 +28,14 @@
         </header>
 
         <div class="main-container">
-            <!-- Left sidebar (Photoshop style) -->
-            <div class="sidebar" id="sidebar">
+            <aside class="sidebar" id="sidebar">
                 <div class="sidebar-section">
                     <h3 class="sidebar-title">Controls</h3>
                     <div class="color-picker-section">
                         <div class="color-item">
                             <span class="color-label">Selected</span>
                             <div id="selectedColorDisplay" class="color-swatch"></div>
-                            <span id="selectedColorHex" class="color-hex">-</span>
+                            <span id="selectedColorHex" class="color-hex">—</span>
                         </div>
                         <div class="color-arrow">
                             <i class="fas fa-arrow-right"></i>
@@ -48,7 +46,7 @@
                             <span id="replacementColorHex" class="color-hex" tabindex="0" role="button" aria-label="Edit hex color value">#ff0000</span>
                         </div>
                     </div>
-                    <!-- Main action buttons directly below color pickers -->
+
                     <div class="sidebar-actions primary-actions">
                         <button id="replaceColorBtn" class="action-button primary" disabled aria-label="Replace selected color with new color">
                             <i class="fas fa-paint-brush"></i>
@@ -59,18 +57,26 @@
                             <span>Save Color</span>
                         </button>
                     </div>
-                     <!-- Saved Colors moved inside Controls section -->
-                     <div class="saved-colors-container sidebar-subsection">
-                        <h4 class="sub-label">Saved Colors:</h4> <!-- Use sub-label style for consistency -->
+
+                    <div class="saved-colors-container sidebar-subsection">
+                        <h4 class="sub-label">Saved Colors</h4>
                         <div class="saved-colors-panel" id="savedColorsPanel"></div>
                     </div>
-                    <!-- Tolerance below main actions -->
+
                     <div class="tolerance-section sidebar-subsection">
-                        <label for="toleranceSlider" class="sub-label">Tolerance:</label>
+                        <label for="toleranceSlider" class="sub-label">Tolerance</label>
                         <input type="range" id="toleranceSlider" min="0" max="100" value="15" class="tolerance-slider" aria-label="Adjust color matching tolerance">
                         <span id="toleranceValue" class="tolerance-value">15</span>
                     </div>
-                    <!-- Secondary actions at the bottom -->
+
+                    <div class="mode-section sidebar-subsection">
+                        <label class="sub-label" for="connectedToggle">
+                            <input type="checkbox" id="connectedToggle" />
+                            <span>Only connected region</span>
+                        </label>
+                        <p class="hint">Replace only the region touching where you clicked.</p>
+                    </div>
+
                     <div class="sidebar-actions secondary-actions sidebar-subsection">
                         <button id="undoBtn" class="action-button secondary" disabled>
                             <i class="fas fa-undo"></i>
@@ -85,52 +91,92 @@
                             <span>Download</span>
                         </button>
                     </div>
-                   
-                </div> <!-- This div closes the single "Controls" section -->
-            </div>
 
-            <!-- Main workspace -->
+                    <div class="download-format sidebar-subsection">
+                        <label class="sub-label" for="formatSelect">Format</label>
+                        <select id="formatSelect" class="format-select">
+                            <option value="auto">Match source</option>
+                            <option value="png">PNG</option>
+                            <option value="jpg">JPG</option>
+                            <option value="webp">WebP</option>
+                        </select>
+                    </div>
+                </div>
+            </aside>
+
             <main class="workspace">
-                <!-- Upload area (visible before image upload) -->
                 <div class="upload-area" id="uploadArea">
                     <div class="upload-content">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <h2>Upload an Image</h2>
-                        <p>Drag & drop a PNG image here or click to browse</p>
+                        <p>Drag &amp; drop a PNG, JPG, or WebP here, or click to browse</p>
                         <label for="imageUpload" class="upload-button">
                             <i class="fas fa-file-image"></i>
                             Select Image
                         </label>
-                        <input type="file" id="imageUpload" accept="image/png" hidden>
+                        <input type="file" id="imageUpload" accept="image/png,image/jpeg,image/webp" hidden>
                     </div>
                 </div>
 
-                <!-- Editor area (visible after image upload) -->
                 <div class="editor-area" id="editorArea">
                     <div class="canvas-container" id="canvasContainer">
-                        <canvas id="imageCanvas" aria-label="Image editor canvas. Click on the image to select a color."></canvas>
+                        <div class="canvas-stack" id="canvasStack">
+                            <canvas id="imageCanvas" aria-label="Image editor canvas. Click on the image to select a color."></canvas>
+                            <canvas id="overlayCanvas" class="overlay-canvas" aria-hidden="true"></canvas>
+                        </div>
+                    </div>
+                    <div class="status-bar" id="statusBar">
+                        <span class="status-item" id="zoomDisplay">100%</span>
+                        <span class="status-divider">•</span>
+                        <span class="status-item" id="dimensionsDisplay">—</span>
+                        <span class="status-divider">•</span>
+                        <label class="status-item toggle-mask" for="showMaskToggle">
+                            <input type="checkbox" id="showMaskToggle" checked>
+                            <span>Show selection</span>
+                        </label>
+                        <span class="status-divider">•</span>
+                        <span class="status-item compare-hint">
+                            <kbd>Esc</kbd> deselect
+                            <span class="status-divider">•</span>
+                            <kbd>Space</kbd> hold to compare
+                        </span>
                     </div>
                 </div>
             </main>
         </div>
 
-        <!-- Color Picker Modal -->
-        <div class="color-picker-modal" id="colorPickerModal">
+        <div class="color-picker-modal" id="colorPickerModal" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
             <div class="color-picker-header">
-                <h3>Select Color</h3>
+                <h3 id="pickerTitle">Pick Color</h3>
                 <button class="close-btn" id="closeColorPicker" aria-label="Close color picker">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <div class="color-picker-content">
-                <div class="color-preview-large" id="colorPreviewLarge"></div>
-                
+                <div class="picker-top">
+                    <div class="sv-square" id="svSquare" aria-label="Saturation and brightness picker">
+                        <div class="sv-overlay-white"></div>
+                        <div class="sv-overlay-black"></div>
+                        <div class="sv-cursor" id="svCursor"></div>
+                    </div>
+                    <div class="picker-side">
+                        <div class="color-preview-large" id="colorPreviewLarge"></div>
+                        <div class="picker-hex">
+                            <label for="hexInput">HEX</label>
+                            <div class="hex-input-wrap">
+                                <span>#</span>
+                                <input type="text" id="hexInput" value="ff0000" maxlength="6" autocomplete="off" spellcheck="false">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="color-spectrum-container">
-                    <div class="color-spectrum" id="colorSpectrum">
+                    <div class="color-spectrum" id="colorSpectrum" aria-label="Hue slider">
                         <div class="color-spectrum-selector" id="colorSpectrumSelector"></div>
                     </div>
                 </div>
-                
+
                 <div class="color-inputs">
                     <div class="color-input-group">
                         <label for="redInput">R</label>
@@ -144,12 +190,21 @@
                         <label for="blueInput">B</label>
                         <input type="number" id="blueInput" min="0" max="255" value="0">
                     </div>
-                    <div class="color-input-group">
-                        <label for="hexInput">#</label>
-                        <input type="text" id="hexInput" value="ff0000" maxlength="6">
-                    </div>
                 </div>
-                
+
+                <div class="quick-presets" id="quickPresets" aria-label="Quick color presets">
+                    <button type="button" class="preset-swatch" data-color="#ffffff" title="White"></button>
+                    <button type="button" class="preset-swatch" data-color="#e5e5e5" title="Light gray"></button>
+                    <button type="button" class="preset-swatch" data-color="#9ca3af" title="Gray"></button>
+                    <button type="button" class="preset-swatch" data-color="#4b5563" title="Dark gray"></button>
+                    <button type="button" class="preset-swatch" data-color="#000000" title="Black"></button>
+                    <button type="button" class="preset-swatch" data-color="#ef4444" title="Red"></button>
+                    <button type="button" class="preset-swatch" data-color="#f59e0b" title="Amber"></button>
+                    <button type="button" class="preset-swatch" data-color="#10b981" title="Green"></button>
+                    <button type="button" class="preset-swatch" data-color="#3b82f6" title="Blue"></button>
+                    <button type="button" class="preset-swatch" data-color="#8b5cf6" title="Violet"></button>
+                </div>
+
                 <div class="color-picker-actions">
                     <button id="saveColorBtn" class="action-button accent">
                         <i class="fas fa-plus"></i>
@@ -163,7 +218,6 @@
             </div>
         </div>
 
-        <!-- Footer with privacy info -->
         <footer class="app-footer">
             <div class="privacy-notice">
                 <i class="fas fa-shield-alt"></i>
@@ -176,4 +230,4 @@
     </div>
     <script src="script.js"></script>
 </body>
-</html> 
+</html>
